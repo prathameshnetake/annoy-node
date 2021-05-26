@@ -1,55 +1,71 @@
-#include "iostream"
-#include "annoylib.h"
-#include "kissrandom.h"
+#include "annoy.h"
 
-int main()
+Napi::Object AnnoyIndexWrapper::Init(Napi::Env env, Napi::Object exports)
 {
+  Napi::Function func =
+      DefineClass(env,
+                  "AnnoyIndexWrapper",
+                  {InstanceMethod("addItem", &AnnoyIndexWrapper::addItem)});
 
-    const int f = 40;
-    double *vec = (double *)malloc(f * sizeof(double));
+  Napi::FunctionReference *constructor = new Napi::FunctionReference();
+  *constructor = Napi::Persistent(func);
+  env.SetInstanceData(constructor);
 
-    AnnoyIndex<int, double, Angular, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy> t = AnnoyIndex<int, double, Angular, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(f);
+  exports.Set("AnnoyIndex", func);
+  return exports;
+}
 
-    for (int temp = 0; temp < 1000; temp++)
-    {
+AnnoyIndexWrapper::AnnoyIndexWrapper(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<AnnoyIndexWrapper>(info)
+{
+  Napi::Env env = info.Env();
+  std::cout << "Annoy constructor in c++" << std::endl;
 
-        for (int z = 0; z < f; ++z)
-        {
-            vec[z] = (rand() % 100);
-        }
-        t.add_item(temp, vec);
-    }
+  if (!info[0].IsNumber())
+  {
+    Napi::TypeError::New(env, "Vector size should be number").ThrowAsJavaScriptException();
+    return;
+  }
 
-    t.build(10);
+  if (!info[1].IsNumber())
+  {
+    Napi::TypeError::New(env, "metric should be string").ThrowAsJavaScriptException();
+    return;
+  }
 
-    // t.save("test.ann");
+  int vector_size = info[0].As<Napi::Number>().Int32Value();
+  int metric = info[1].As<Napi::Number>().Int32Value();
 
-    for (int z = 0; z < f; ++z)
-    {
-        vec[z] = (rand() % 100);
-    }
+  // "angular", "euclidean", "manhattan", or "dot"
 
-    std::vector<int> result;
-    std::vector<double> distance;
+  enum metrices
+  {
+    angular = 1,
+    euclidean = 2,
+    manhattan = 3,
+    dot = 4
+  };
 
-    t.get_nns_by_vector(vec, 10, 10, &result, &distance);
+  if (metric == metrices::angular)
+  {
+    t = new AnnoyIndex<int, double, Angular, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
+  }
+  else if (metric == metrices::euclidean)
+  {
+    t = new AnnoyIndex<int, double, Euclidean, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
+  }
+  else if (metric == metrices::manhattan)
+  {
+    t = new AnnoyIndex<int, double, Manhattan, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
+  }
+  else if (metric == metrices::dot)
+  {
+    t = new AnnoyIndex<int, double, DotProduct, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
+  }
+}
 
-    for (int j = 0; j < 10; j++)
-    {
-        // double *v = (double *)malloc(f * sizeof(double));
-        double *v = new double[f]();
-
-        t.get_item(result[j], v);
-        std::cout << result[j] << std::endl;
-        std::cout << distance[j] << std::endl;
-        for (int i = 0; i < f; i++)
-        {
-            std::cout << v[i] << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    std::cout
-        << "Hello World!" << std::endl;
-    return 0;
+Napi::Value AnnoyIndexWrapper::addItem(const Napi::CallbackInfo &info)
+{
+  std::cout << "this is add item in c++" << std::endl;
+  return Napi::Number::New(info.Env(), 10);
 }
