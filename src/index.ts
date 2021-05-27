@@ -17,6 +17,6 @@ export interface AnnoyIndex {
   get_nns_by_vector(item: Float64Array, n: Number): Array<Int32Array>;
 }
 
-const annoy: AnnoyIndex = addon;
+const annoy: AnnoyIndex = addon.AnnoyIndex;
 
 export default annoy;

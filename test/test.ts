@@ -1,6 +1,8 @@
-import test from "../dist";
+import Annoy from "../dist";
 
-console.log(test);
+console.log(Annoy);
+const a = new Annoy(10, 1);
+console.log(a);
 
 // const testData = [
 //   -6.903006076812744, -11.624200820922852, 8.446203231811523, 2.680304765701294,
