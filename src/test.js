@@ -1,4 +1,4 @@
-const AnnoyIndex = require("../build/Release/annoy-node").AnnoyIndex;
+const { AnnoyIndex } = require("bindings")("annoy-node.node");
 
 const testData = [
   -6.903006076812744, -11.624200820922852, 8.446203231811523, 2.680304765701294,
