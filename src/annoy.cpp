@@ -148,6 +148,8 @@ Napi::Value AnnoyIndexWrapper::load(const Napi::CallbackInfo &info) {
 
   auto path = (std::string) info[0].ToString();
   t->load(path.c_str());
+
+  return env.Undefined();
 }
 
 Napi::Value AnnoyIndexWrapper::unload(const Napi::CallbackInfo &info) {
