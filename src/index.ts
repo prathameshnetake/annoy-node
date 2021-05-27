@@ -6,7 +6,8 @@ export enum Metric {
   MANHATTAN,
   DOTPRODUCT,
 }
-export interface IAnnoyIndex {
+export interface AnnoyIndex {
+  new (vectorSize: number, metric: Metric): AnnoyIndex;
   addItem(item: Number, data: Float64Array): void;
   build(treeSize: Number, threads?: Number): void;
   save(path: string): void;
@@ -16,8 +17,6 @@ export interface IAnnoyIndex {
   get_nns_by_vector(item: Float64Array, n: Number): Array<Int32Array>;
 }
 
-const AnnoyIndex: {
-  new (vectorSize: number, metric: Metric): IAnnoyIndex;
-} = addon.AnnoyIndex;
+const annoy: AnnoyIndex = addon;
 
-export default AnnoyIndex;
+export default annoy;
