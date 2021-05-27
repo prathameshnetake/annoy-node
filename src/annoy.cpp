@@ -6,7 +6,7 @@ Napi::Object AnnoyIndexWrapper::Init(Napi::Env env, Napi::Object exports)
 {
   Napi::Function func =
       DefineClass(env,
-                  "AnnoyIndexWrapper",
+                  "AnnoyIndex",
                   {
                     InstanceMethod("addItem", &AnnoyIndexWrapper::addItem), 
                     InstanceMethod("build", &AnnoyIndexWrapper::build),
@@ -27,7 +27,6 @@ AnnoyIndexWrapper::AnnoyIndexWrapper(const Napi::CallbackInfo &info)
     : Napi::ObjectWrap<AnnoyIndexWrapper>(info)
 {
   Napi::Env env = info.Env();
-  std::cout << "Annoy constructor in c++" << std::endl;
 
   if (!info[0].IsNumber())
   {
