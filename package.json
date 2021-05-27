@@ -1,15 +1,16 @@
 {
   "name": "annoy-node",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Annoy Indexing binidings for node.js",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npx rimraf dist && tsc -b",
+    "dist": "npx rimraf dist && tsc",
     "install": "prebuild-install --runtime napi || cmake-js rebuild",
     "rebuild": "cmake-js rebuild",
-    "prebuild": "prebuild --runtime napi --all --strip --verbose --backend cmake-js",
-    "upload": "cross-env-shell prebuild --runtime napi --upload-all $GITHUB_TOKEN",
-    "postinstall": "npm run build"
+    "prebuild-lib": "prebuild --runtime napi --all --strip --verbose --backend cmake-js",
+    "upload-lib": "cross-env-shell prebuild --runtime napi --upload-all $GITHUB_TOKEN",
+    "postinstall": "npm run dist"
   },
   "repository": {
     "type": "git",
