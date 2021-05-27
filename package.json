@@ -1,6 +1,6 @@
 {
   "name": "annoy-node",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Annoy Indexing binidings for node.js",
   "main": "dist/index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "url": "https://github.com/prathameshnetake/annoy-node/issues"
   },
   "homepage": "https://github.com/prathameshnetake/annoy-node#readme",
-  "devDependencies": {
+  "dependencies": {
     "@types/node": "^15.6.1",
     "bindings": "^1.5.0",
     "cmake-js": "^6.1.0",
