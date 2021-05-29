@@ -1,6 +1,6 @@
 {
   "name": "annoy-node",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Annoy Indexing binidings for node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
