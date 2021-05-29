@@ -83,6 +83,11 @@ Napi::Value AnnoyIndexWrapper::addItem(const Napi::CallbackInfo &info)
     return info.Env().Undefined();
   }
 
+  if (!info[1].IsTypedArray()) {
+    Napi::TypeError::New(env, "item must be typed array").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
   int item = info[0].As<Napi::Number>().Int32Value();
   Napi::Float64Array buf = info[1].As<Napi::Float64Array>();
 
@@ -202,8 +207,8 @@ Napi::Value AnnoyIndexWrapper::get_nns_by_vector(const Napi::CallbackInfo &info)
   // info[0] is vector
   // info[1] Number of results required
 
-  if (!info[0].IsArray()) {
-    Napi::TypeError::New(env, "item must be array vector").ThrowAsJavaScriptException();
+  if (!info[0].IsTypedArray()) {
+    Napi::TypeError::New(env, "item must be typed array").ThrowAsJavaScriptException();
     return env.Undefined();
   }
 
