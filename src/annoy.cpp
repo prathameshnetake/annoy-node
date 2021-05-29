@@ -11,6 +11,8 @@ Napi::Object AnnoyIndexWrapper::Init(Napi::Env env, Napi::Object exports)
                     InstanceMethod("addItem", &AnnoyIndexWrapper::addItem), 
                     InstanceMethod("build", &AnnoyIndexWrapper::build),
                     InstanceMethod("save", &AnnoyIndexWrapper::save),
+                    InstanceMethod("load", &AnnoyIndexWrapper::load),
+                    InstanceMethod("unload", &AnnoyIndexWrapper::unload),
                     InstanceMethod("get_nns_by_item", &AnnoyIndexWrapper::get_nns_by_item),
                     InstanceMethod("get_nns_by_vector", &AnnoyIndexWrapper::get_nns_by_vector)
                   });
