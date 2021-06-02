@@ -13,8 +13,16 @@ export interface AnnoyIndex {
   save(path: string): void;
   load(path: string): void;
   unload(): void;
-  get_nns_by_item(item: Number, n: Number): Array<Int32Array>;
-  get_nns_by_vector(item: Float64Array, n: Number): Array<Int32Array>;
+  get_nns_by_item(
+    item: Number,
+    n: Number,
+    includeDistances: boolean
+  ): { neighbours: Array<Int32Array>; distances?: Array<Int32Array> };
+  get_nns_by_vector(
+    item: Float64Array,
+    n: Number,
+    includeDistances: boolean
+  ): { neighbours: Array<Int32Array>; distances?: Array<Int32Array> };
 }
 
 const annoy: AnnoyIndex = addon.AnnoyIndex;
