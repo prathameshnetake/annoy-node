@@ -8,6 +8,11 @@ export enum Metric {
 }
 export interface AnnoyIndex {
   new (vectorSize: number, metric: Metric): AnnoyIndex;
+  /**
+   * 
+   * @param item interger number
+   * @param data Float64Array to be added in annoy index
+   */
   addItem(item: Number, data: Float64Array): void;
   build(treeSize: Number, threads?: Number): void;
   save(path: string): void;
