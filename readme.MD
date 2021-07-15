@@ -15,7 +15,7 @@ Most of the [Python API](https://github.com/spotify/annoy#full-python-api) metho
 
 ## Installation
 
-Supports Linux, Windows, and MacOS. Node version >= 14. Prebuilt binaries are already updated if not available for your configuration then you need to require [cmake](https://cmake.org/) in path then install cmake-js globally
+Supports Linux, Windows, and MacOS. Node version >= 14. Prebuilt binaries are already updated. If not available for your configuration then you need to have [cmake](https://cmake.org/) in path. Then install cmake-js globally
 
     npm install -g cmake-js
 
@@ -23,7 +23,7 @@ Make sure you have valid C++ compiler
 
 Then:
 
-    npm install annoy
+    npm install annoy-node
     or
     yarn add annoy-node
 
