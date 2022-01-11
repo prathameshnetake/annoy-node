@@ -13,7 +13,7 @@ export interface AnnoyIndex {
    * @param item interger number
    * @param data Float64Array to be added in annoy index
    */
-  addItem(item: Number, data: Float64Array): void;
+  addItem(item: Number, data: Float32Array): void;
   build(treeSize: Number, threads?: Number): void;
   save(path: string): void;
   load(path: string): void;
@@ -24,7 +24,7 @@ export interface AnnoyIndex {
     includeDistances: boolean
   ): { neighbours: Array<Int32Array>; distances?: Array<Int32Array> };
   get_nns_by_vector(
-    item: Float64Array,
+    item: Float32Array,
     n: Number,
     includeDistances: boolean
   ): { neighbours: Array<Int32Array>; distances?: Array<Int32Array> };

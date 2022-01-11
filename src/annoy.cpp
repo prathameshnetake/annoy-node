@@ -56,19 +56,19 @@ AnnoyIndexWrapper::AnnoyIndexWrapper(const Napi::CallbackInfo &info)
 
   if (metric == metrices::angular)
   {
-    t = new AnnoyIndex<int, double, Angular, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
+    t = new AnnoyIndex<int, float, Angular, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
   }
   else if (metric == metrices::euclidean)
   {
-    t = new AnnoyIndex<int, double, Euclidean, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
+    t = new AnnoyIndex<int, float, Euclidean, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
   }
   else if (metric == metrices::manhattan)
   {
-    t = new AnnoyIndex<int, double, Manhattan, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
+    t = new AnnoyIndex<int, float, Manhattan, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
   }
   else if (metric == metrices::dot)
   {
-    t = new AnnoyIndex<int, double, DotProduct, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
+    t = new AnnoyIndex<int, float, DotProduct, Kiss32Random, AnnoyIndexMultiThreadedBuildPolicy>(vector_size);
   }
 }
 
@@ -89,14 +89,10 @@ Napi::Value AnnoyIndexWrapper::addItem(const Napi::CallbackInfo &info)
   }
 
   int item = info[0].As<Napi::Number>().Int32Value();
-  Napi::Float64Array buf = info[1].As<Napi::Float64Array>();
+  Napi::Float32Array buf = info[1].As<Napi::Float32Array>();
 
-  double *data = buf.Data();
-  const int size = buf.ByteLength() / sizeof(double);
-
-  // for (int i = 0; i < size; i++) {
-  //   std::cout << std::setprecision(20) << data[i] << std::endl;
-  // }
+  float *data = buf.Data();
+  const int size = buf.ByteLength() / sizeof(float);
 
   t->add_item(item, data);
 
@@ -203,7 +199,7 @@ Napi::Value AnnoyIndexWrapper::get_nns_by_item(const Napi::CallbackInfo &info)
   int n = info[1].As<Napi::Number>().Int32Value();
   Napi::Boolean includeDistance = info[2].As<Napi::Boolean>();
   std::vector<int> result;
-  std::vector<double> distace;
+  std::vector<float> distace;
 
   t->get_nns_by_item(item, n, -1, &result, &distace);
 
@@ -254,13 +250,13 @@ Napi::Value AnnoyIndexWrapper::get_nns_by_vector(const Napi::CallbackInfo &info)
     return env.Undefined();
   }
 
-  Napi::Float64Array buf = info[0].As<Napi::Float64Array>();
-  double *data = buf.Data();
+  Napi::Float32Array buf = info[0].As<Napi::Float32Array>();
+  float *data = buf.Data();
   int n = info[1].As<Napi::Number>().Int32Value();
   Napi::Boolean includeDistance = info[2].As<Napi::Boolean>();
 
   std::vector<int> result;
-  std::vector<double> distace;
+  std::vector<float> distace;
 
   t->get_nns_by_vector(data, n, -1, &result, &distace);
 
