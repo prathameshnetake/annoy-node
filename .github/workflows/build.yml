@@ -1,0 +1,117 @@
+# reference https://github.com/lovell/sharp/blob/main/.github/workflows/ci.yml
+
+name: CI (GitHub)
+on:
+  push:
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - "**"
+
+permissions: {}
+jobs:
+  CI:
+    permissions:
+      contents: write # for npx prebuild to make release
+    name: ${{ matrix.container || matrix.os }} - Node.js ${{ matrix.nodejs_version }} ${{ matrix.nodejs_arch }} ${{ matrix.prebuild && '- prebuild' }}
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            container: centos:7
+            nodejs_version: 14
+            prebuild: true
+          - os: ubuntu-22.04
+            container: centos:7
+            nodejs_version: 16
+          - os: ubuntu-22.04
+            container: rockylinux:8
+            nodejs_version: 18
+          - os: ubuntu-22.04
+            container: node:14-alpine3.12
+            prebuild: true
+          - os: ubuntu-22.04
+            container: node:16-alpine3.12
+          - os: ubuntu-22.04
+            container: node:18-alpine3.14
+          - os: macos-11
+            nodejs_version: 14
+            prebuild: true
+            nodejs_arch: x64
+          - os: macos-11
+            nodejs_version: 16
+            nodejs_arch: x64
+          - os: macos-11
+            nodejs_version: 18
+            nodejs_arch: x64
+          - os: windows-2019
+            nodejs_version: 14
+            nodejs_arch: x64
+            prebuild: true
+          - os: windows-2019
+            nodejs_version: 16
+            nodejs_arch: x64
+          - os: windows-2019
+            nodejs_version: 18
+            nodejs_arch: x64
+    steps:
+      - name: Dependencies (Linux glibc)
+        if: contains(matrix.container, 'centos')
+        run: |
+          curl -sL https://rpm.nodesource.com/setup_${{ matrix.nodejs_version }}.x | bash -
+          yum install -y centos-release-scl
+          yum install -y devtoolset-11-gcc-c++ make git nodejs
+          echo "/opt/rh/devtoolset-11/root/usr/bin" >> $GITHUB_PATH
+      - name: Dependencies (Linux glibc)
+        if: contains(matrix.container, 'centos')
+        run: |
+          yum install -y tar gzip
+          tmp_dir="$(mktemp -d)"
+          cd "$tmp_dir" || exit 1
+
+          version=3.24.2
+          arch=$([ "$(arch)" == "x86_64" ] && echo "x86_64" || echo "aarch64")
+          curl --location --silent https://github.com/Kitware/CMake/releases/download/v$version/cmake-$version-linux-$arch.sh --output cmake-$version-linux-$arch.sh
+          mkdir -p /opt/cmake
+          sh cmake-$version-linux-$arch.sh --skip-license --prefix=/opt/cmake
+          ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
+
+          rm -rf "$tmp_dir"
+
+      - name: Dependencies (Rocky Linux glibc)
+        if: contains(matrix.container, 'rockylinux')
+        run: |
+          curl -sL https://rpm.nodesource.com/setup_${{ matrix.nodejs_version }}.x | bash -
+          dnf install -y gcc-toolset-11-gcc-c++ make git nodejs cmake
+          echo "/opt/rh/gcc-toolset-11/root/usr/bin" >> $GITHUB_PATH
+      - name: Dependencies (Linux musl)
+        if: contains(matrix.container, 'alpine')
+        run: apk add build-base git cmake --update-cache
+      - name: Dependencies (macOS, Windows)
+        if: contains(matrix.os, 'macos') || contains(matrix.os, 'windows')
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.nodejs_version }}
+          architecture: ${{ matrix.nodejs_arch }}
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fix working directory ownership
+        if: matrix.container
+        run: chown root.root .
+      - name: Dependencies (cmake)
+        run: npm install --global --unsafe-perm cmake-js
+      - name: Install
+        run: npm install --build-from-source --unsafe-perm
+      - name: Test
+        run: npm test
+      - name: Prebuild
+        if: matrix.prebuild && startsWith(github.ref, 'refs/tags/v')
+        env:
+          PAT: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run prebuild-lib
+          npm run upload-lib

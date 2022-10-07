@@ -1,6 +1,6 @@
 {
   "name": "annoy-node",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "Annoy Indexing binidings for node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,14 +8,14 @@
     "dist": "npx rimraf dist && tsc",
     "install": "prebuild-install --runtime napi || cmake-js rebuild",
     "rebuild": "cmake-js rebuild",
-    "prebuild-lib": "prebuild --runtime napi --all --strip --verbose --backend cmake-js",
-    "upload-lib": "cross-env-shell prebuild --runtime napi --upload-all $GITHUB_TOKEN",
+    "prebuild-lib": "npx prebuild --runtime napi --all --strip --verbose --backend cmake-js",
+    "upload-lib": "npx cross-env-shell npx prebuild --runtime napi --upload-all $PAT",
     "postinstall": "npm run dist",
     "test": "ts-node test/test.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/prathameshnetake/annoy-node.git"
+    "url": "git+https://github.com/jlarmstrongiv/annoy-node-prebuild.git"
   },
   "keywords": [
     "annoy",
@@ -35,9 +35,9 @@
   "author": "Prathamesh Netake",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/prathameshnetake/annoy-node/issues"
+    "url": "https://github.com/jlarmstrongiv/annoy-node-prebuild/issues"
   },
-  "homepage": "https://github.com/prathameshnetake/annoy-node#readme",
+  "homepage": "https://github.com/jlarmstrongiv/annoy-node-prebuild#readme",
   "dependencies": {
     "@types/node": "^15.6.1",
     "bindings": "^1.5.0",
